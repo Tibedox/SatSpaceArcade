@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class SatSpaceArcade extends ApplicationAdapter {
+	public static final float SCR_WIDTH = 1080, SCR_HEIGHT = 1920;
+
 	SpriteBatch batch;
 	Texture img;
 	
