@@ -1,33 +1,36 @@
 package com.mygdx.satspacearcade;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.math.Vector3;
 
-public class SatSpaceArcade extends ApplicationAdapter {
-	public static final float SCR_WIDTH = 1080, SCR_HEIGHT = 1920;
+public class SatSpaceArcade extends Game {
+	public static final float SCR_WIDTH = 900, SCR_HEIGHT = 1600;
 
 	SpriteBatch batch;
-	Texture img;
+	OrthographicCamera camera;
+	Vector3 touch;
+
+	ScreenMenu screenMenu;
+	ScreenSettings screenSettings;
+	ScreenGame screenGame;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-	}
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
+		touch = new Vector3();
 
-	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+		screenMenu = new ScreenMenu(this);
+		screenSettings = new ScreenSettings(this);
+		screenGame = new ScreenGame(this);
+		setScreen(screenSettings);
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 }
