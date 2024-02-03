@@ -1,5 +1,8 @@
 package com.mygdx.satspacearcade;
 
+import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_HEIGHT;
+import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,7 +21,7 @@ public class ScreenAbout implements Screen {
 
     SpaceButton btnBack;
 
-    Texture img;
+    Texture imgBackGround;
 
     public ScreenAbout(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -26,9 +29,8 @@ public class ScreenAbout implements Screen {
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
         font = satSpaceArcade.font;
-        font.getData().setScale(2f);
 
-        img = new Texture("badlogic.jpg");
+        imgBackGround = new Texture("stars2.png");
 
         btnBack = new SpaceButton("Back", 200, 400, font);
     }
@@ -56,9 +58,8 @@ public class ScreenAbout implements Screen {
         ScreenUtils.clear(0.5f, 0, 0.5f, 1);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        batch.draw(img, 0, 0);
-        font.draw(batch, "Клёвая игрушка!", 200, 1000);
-
+        batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
+        font.draw(batch, "Клёвая\nигрушка!", 200, 1000);
         font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
         batch.end();
     }
@@ -85,6 +86,6 @@ public class ScreenAbout implements Screen {
 
     @Override
     public void dispose() {
-        img.dispose();
+        imgBackGround.dispose();
     }
 }

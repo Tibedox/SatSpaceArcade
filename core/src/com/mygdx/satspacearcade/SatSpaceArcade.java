@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
-import java.awt.Font;
-
 public class SatSpaceArcade extends Game {
 	public static final float SCR_WIDTH = 900, SCR_HEIGHT = 1600;
 

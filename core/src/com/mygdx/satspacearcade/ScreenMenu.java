@@ -1,5 +1,7 @@
 package com.mygdx.satspacearcade;
 
+import static com.mygdx.satspacearcade.SatSpaceArcade.*;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,7 +23,7 @@ public class ScreenMenu implements Screen {
     SpaceButton btnAbout;
     SpaceButton btnExit;
 
-    Texture img;
+    Texture imgBackGround;
 
     public ScreenMenu(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -29,9 +31,9 @@ public class ScreenMenu implements Screen {
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
         font = satSpaceArcade.font;
-        font.getData().setScale(2f);
+        //font.getData().setScale(2f);
 
-        img = new Texture("badlogic.jpg");
+        imgBackGround = new Texture("stars3.png");
 
         btnPlay = new SpaceButton("Play", 200, 1000, font);
         btnSettings = new SpaceButton("Settings", 200, 800, font);
@@ -70,7 +72,7 @@ public class ScreenMenu implements Screen {
         ScreenUtils.clear(1, 0, 0, 1);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        batch.draw(img, 0, 0);
+        batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         font.draw(batch, btnPlay.text, btnPlay.x, btnPlay.y);
         font.draw(batch, btnSettings.text, btnSettings.x, btnSettings.y);
         font.draw(batch, btnAbout.text, btnAbout.x, btnAbout.y);
@@ -100,6 +102,6 @@ public class ScreenMenu implements Screen {
 
     @Override
     public void dispose() {
-        img.dispose();
+        imgBackGround.dispose();
     }
 }
