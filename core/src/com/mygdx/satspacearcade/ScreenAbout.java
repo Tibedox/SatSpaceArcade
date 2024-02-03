@@ -9,21 +9,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class ScreenSettings implements Screen {
+public class ScreenAbout implements Screen {
     SatSpaceArcade satSpaceArcade;
     SpriteBatch batch;
     OrthographicCamera camera;
     Vector3 touch;
     BitmapFont font;
 
-    SpaceButton btnPlay;
-    SpaceButton btnSettings;
-    SpaceButton btnAbout;
-    SpaceButton btnExit;
+    SpaceButton btnBack;
 
     Texture img;
 
-    public ScreenSettings(SatSpaceArcade satSpaceArcade) {
+    public ScreenAbout(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
         batch = satSpaceArcade.batch;
         camera = satSpaceArcade.camera;
@@ -33,10 +30,7 @@ public class ScreenSettings implements Screen {
 
         img = new Texture("badlogic.jpg");
 
-        btnPlay = new SpaceButton("Name", 200, 1000, font);
-        btnSettings = new SpaceButton("Sound ON", 200, 800, font);
-        btnAbout = new SpaceButton("Music ON", 200, 600, font);
-        btnExit = new SpaceButton("Back", 200, 400, font);
+        btnBack = new SpaceButton("Back", 200, 400, font);
     }
 
     @Override
@@ -50,16 +44,8 @@ public class ScreenSettings implements Screen {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-            if(btnPlay.hit(touch.x, touch.y)){
-                //satSpaceArcade.setScreen(satSpaceArcade.screenGame);
-            }
-            if(btnSettings.hit(touch.x, touch.y)){
-                //satSpaceArcade.setScreen(satSpaceArcade.screenSettings);
-            }
-            if(btnAbout.hit(touch.x, touch.y)){
-                //satSpaceArcade.setScreen(satSpaceArcade.screenGame);
-            }
-            if(btnExit.hit(touch.x, touch.y)){
+
+            if(btnBack.hit(touch.x, touch.y)){
                 satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
             }
         }
@@ -67,14 +53,13 @@ public class ScreenSettings implements Screen {
         // события
 
         // отрисовка
-        ScreenUtils.clear(0, 0.3f, 0, 1);
+        ScreenUtils.clear(0.5f, 0, 0.5f, 1);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(img, 0, 0);
-        font.draw(batch, btnPlay.text, btnPlay.x, btnPlay.y);
-        font.draw(batch, btnSettings.text, btnSettings.x, btnSettings.y);
-        font.draw(batch, btnAbout.text, btnAbout.x, btnAbout.y);
-        font.draw(batch, btnExit.text, btnExit.x, btnExit.y);
+        font.draw(batch, "Клёвая игрушка!", 200, 1000);
+
+        font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
         batch.end();
     }
 
