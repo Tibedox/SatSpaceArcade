@@ -35,10 +35,10 @@ public class ScreenMenu implements Screen {
 
         imgBackGround = new Texture("stars3.png");
 
-        btnPlay = new SpaceButton("Play", 200, 1000, font);
-        btnSettings = new SpaceButton("Settings", 200, 800, font);
-        btnAbout = new SpaceButton("About game", 200, 600, font);
-        btnExit = new SpaceButton("Exit", 200, 400, font);
+        btnPlay = new SpaceButton("Play", 100, 1000, font);
+        btnSettings = new SpaceButton("Settings", 100, 800, font);
+        btnAbout = new SpaceButton("About", 100, 600, font);
+        btnExit = new SpaceButton("Exit", 100, 400, font);
     }
 
     @Override

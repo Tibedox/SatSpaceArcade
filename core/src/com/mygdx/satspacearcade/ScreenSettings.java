@@ -22,7 +22,7 @@ public class ScreenSettings implements Screen {
     SpaceButton btnPlay;
     SpaceButton btnSettings;
     SpaceButton btnAbout;
-    SpaceButton btnExit;
+    SpaceButton btnBack;
 
     Texture imgBackGround;
 
@@ -38,7 +38,7 @@ public class ScreenSettings implements Screen {
         btnPlay = new SpaceButton("Name", 200, 1000, font);
         btnSettings = new SpaceButton("Sound ON", 200, 800, font);
         btnAbout = new SpaceButton("Music ON", 200, 600, font);
-        btnExit = new SpaceButton("Back", 200, 400, font);
+        btnBack = new SpaceButton("Back", 200, 400, font);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ScreenSettings implements Screen {
             if(btnAbout.hit(touch.x, touch.y)){
                 //satSpaceArcade.setScreen(satSpaceArcade.screenGame);
             }
-            if(btnExit.hit(touch.x, touch.y)){
+            if(btnBack.hit(touch.x, touch.y)){
                 satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
             }
         }
@@ -76,7 +76,7 @@ public class ScreenSettings implements Screen {
         font.draw(batch, btnPlay.text, btnPlay.x, btnPlay.y);
         font.draw(batch, btnSettings.text, btnSettings.x, btnSettings.y);
         font.draw(batch, btnAbout.text, btnAbout.x, btnAbout.y);
-        font.draw(batch, btnExit.text, btnExit.x, btnExit.y);
+        font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
         batch.end();
     }
 

@@ -14,5 +14,21 @@ public class Ship extends SpaceObject{
     @Override
     void move() {
         super.move();
+        outOfScreen();
+    }
+
+    void touch(float tx) {
+        vx = (tx - x) / 20;
+    }
+
+    void outOfScreen(){
+        if(x < width/2) {
+            x = width/2;
+            vx = 0;
+        }
+        if(x > SCR_WIDTH-width/2){
+            x = SCR_WIDTH-width/2;
+            vx = 0;
+        }
     }
 }
