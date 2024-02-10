@@ -26,7 +26,7 @@ public class SatSpaceArcade extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
 		touch = new Vector3();
-		font = new BitmapFont(Gdx.files.internal("cyberpunk.fnt"));
+		font = new BitmapFont(Gdx.files.internal("crystalfont.fnt"));
 
 		screenMenu = new ScreenMenu(this);
 		screenSettings = new ScreenSettings(this);
