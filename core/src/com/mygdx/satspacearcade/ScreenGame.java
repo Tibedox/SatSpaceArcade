@@ -28,15 +28,16 @@ public class ScreenGame implements Screen {
     Texture imgBackGround;
     Texture imgShipsAtlas;
     TextureRegion[] imgShip = new TextureRegion[12];
+    TextureRegion[] imgEnemy = new TextureRegion[12];
     Texture imgShot;
 
     SpaceButton btnBack;
     Stars[] stars = new Stars[2];
     Ship ship;
     Array<Shot> shots = new Array<>();
+    Array<Enemy> enemies = new Array<>();
     long timeShotLastSpawn, timeShotInterval = 700;
-
-    //String s="*";
+    long timeEnemyLastSpawn, timeEnemyInterval = 1500;
 
     public ScreenGame(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -50,7 +51,7 @@ public class ScreenGame implements Screen {
         isAccelerometerAvailable = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
 
         imgBackGround = new Texture("stars0.png");
-        imgShipsAtlas = new Texture("ships_atlas.png");
+        imgShipsAtlas = new Texture("ships_atlas3.png");
         imgShot = new Texture("shoot_blaster_red.png");
 
         btnBack = new SpaceButton("x", SCR_WIDTH-80, SCR_HEIGHT, font);
@@ -58,8 +59,10 @@ public class ScreenGame implements Screen {
         for (int i = 0; i < imgShip.length; i++) {
             if(i<7) {
                 imgShip[i] = new TextureRegion(imgShipsAtlas, i * 400, 0, 400, 400);
+                imgEnemy[i] = new TextureRegion(imgShipsAtlas, i * 400, 1600, 400, 400);
             } else {
                 imgShip[i] = new TextureRegion(imgShipsAtlas, (12-i) * 400, 0, 400, 400);
+                imgEnemy[i] = new TextureRegion(imgShipsAtlas, (12-i) * 400, 1600, 400, 400);
             }
         }
 
@@ -85,14 +88,13 @@ public class ScreenGame implements Screen {
             }
 
             ship.touch(touch.x);
-        }/* else if (isAccelerometerAvailable){
+        }
+        /* else if (isAccelerometerAvailable){
             ship.vx = -Gdx.input.getAccelerometerX()*10;
-            /*s = "x: "+ Gdx.input.getAccelerometerX()+"\n";
-            s += "y: "+ Gdx.input.getAccelerometerY()+"\n";
-            s += "z: "+ Gdx.input.getAccelerometerZ()+"\n";
-        } else if (isGyroscopeAvailable){
+        } */
+        /*else if (isGyroscopeAvailable){
             ship.vx = Gdx.input.getGyroscopeY()*10;
-            /*s = "x: "+ Gdx.input.getGyroscopeX()+"\n";
+            s = "x: "+ Gdx.input.getGyroscopeX()+"\n";
             s += "y: "+ Gdx.input.getGyroscopeY()+"\n";
             s += "z: "+ Gdx.input.getGyroscopeZ()+"\n";
         }*/
@@ -100,7 +102,12 @@ public class ScreenGame implements Screen {
         // события
         for (Stars s: stars) s.move();
         ship.move();
+        spawnEnemy();
         spawnShot();
+        for (int i = 0; i < enemies.size; i++) {
+            enemies.get(i).move();
+            if(enemies.get(i).outOfScreen()) enemies.removeIndex(i);
+        }
         for (int i = 0; i < shots.size; i++) {
             shots.get(i).move();
             if(shots.get(i).outOfScreen()) shots.removeIndex(i);
@@ -113,6 +120,9 @@ public class ScreenGame implements Screen {
             batch.draw(imgBackGround, s.x, s.y, s.width, s.height);
         }
         font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
+        for (Enemy s: enemies) {
+            batch.draw(imgEnemy[s.phase], s.getX(), s.getY(), s.width, s.height);
+        }
         for (Shot s: shots) {
             batch.draw(imgShot, s.getX(), s.getY(), s.width, s.height);
         }
@@ -143,12 +153,21 @@ public class ScreenGame implements Screen {
     @Override
     public void dispose() {
         imgBackGround.dispose();
+        imgShipsAtlas.dispose();
+        imgShot.dispose();
     }
 
     void spawnShot(){
         if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
             shots.add(new Shot(ship));
             timeShotLastSpawn = TimeUtils.millis();
+        }
+    }
+
+    void spawnEnemy(){
+        if(TimeUtils.millis() > timeEnemyLastSpawn+timeEnemyInterval){
+            enemies.add(new Enemy());
+            timeEnemyLastSpawn = TimeUtils.millis();
         }
     }
 }
