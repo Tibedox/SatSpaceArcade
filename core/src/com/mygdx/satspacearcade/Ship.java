@@ -15,6 +15,7 @@ public class Ship extends SpaceObject{
     void move() {
         super.move();
         outOfScreen();
+        changePhase();
     }
 
     void touch(float tx) {

@@ -12,7 +12,6 @@ public class SpaceObject {
     void move() {
         x += vx;
         y += vy;
-        changePhase();
     }
 
     float getX(){
