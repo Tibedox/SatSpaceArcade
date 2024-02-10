@@ -21,9 +21,6 @@ public class Enemy extends SpaceObject {
     }
 
     boolean outOfScreen(){
-        if(y < -height/2) {
-            return true;
-        }
-        return false;
+        return y < -height / 2;
     }
 }
