@@ -48,6 +48,7 @@ public class ScreenGame implements Screen {
     Array<Fragment> fragments = new Array<>();
     int nFragments = 50;
     boolean isGameOver;
+    int kills;
 
     public ScreenGame(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -106,7 +107,7 @@ public class ScreenGame implements Screen {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
 
-            if(btnBack.hit(touch.x, touch.y)){
+            if(isGameOver & btnBack.hit(touch.x, touch.y)){
                 satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
             }
 
@@ -158,6 +159,7 @@ public class ScreenGame implements Screen {
                     sndExplosion.play();
                     shots.removeIndex(i);
                     enemies.removeIndex(j);
+                    kills++;
                     break;
                 }
             }
@@ -194,6 +196,7 @@ public class ScreenGame implements Screen {
         for (int i = 0; i < ship.lives; i++) {
             batch.draw(imgShip[0], SCR_WIDTH-90*(i+1), SCR_HEIGHT-90, 70, 70);
         }
+        fontSmall.draw(batch, "Kills: "+kills, 20, SCR_HEIGHT-20);
         batch.end();
     }
 
@@ -274,5 +277,6 @@ public class ScreenGame implements Screen {
         ship.lives = 1;
         respawnShip();
         isGameOver = false;
+        kills = 0;
     }
 }
