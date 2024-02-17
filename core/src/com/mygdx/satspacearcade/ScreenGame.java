@@ -22,7 +22,7 @@ public class ScreenGame implements Screen {
     SpriteBatch batch;
     OrthographicCamera camera;
     Vector3 touch;
-    BitmapFont font;
+    BitmapFont fontLarge, fontSmall;
 
     boolean isGyroscopeAvailable;
     boolean isAccelerometerAvailable;
@@ -54,7 +54,8 @@ public class ScreenGame implements Screen {
         batch = satSpaceArcade.batch;
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
-        font = satSpaceArcade.font;
+        fontLarge = satSpaceArcade.fontLarge;
+        fontSmall = satSpaceArcade.fontSmall;
 
         // проверяем, включены ли датчики гироскопа и акселерометра
         isGyroscopeAvailable = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
@@ -68,7 +69,7 @@ public class ScreenGame implements Screen {
         imgFragmentsAtlas = new Texture("ships_fragment_atlas.png");
         imgShot = new Texture("shoot_blaster_red.png");
 
-        btnBack = new SpaceButton("back to menu", SCR_HEIGHT/5, font, Align.center);
+        btnBack = new SpaceButton("back to menu", SCR_HEIGHT/5, fontSmall, Align.center);
 
         for (int i = 0; i < imgShip.length; i++) {
             if(i<7) {
@@ -91,7 +92,7 @@ public class ScreenGame implements Screen {
     public void show() {
         touch.set(0, 0, 0);
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             //
         }
@@ -128,7 +129,7 @@ public class ScreenGame implements Screen {
             spawnEnemy();
             spawnShot();
         } else {
-            if(shots.size == 0 & enemies.size == 0){
+            if(shots.size == 0 & enemies.size == 0 & ship.lives>0){
                 respawnShip();
             }
         }
@@ -174,7 +175,10 @@ public class ScreenGame implements Screen {
         for (Stars s: stars) {
             batch.draw(imgBackGround, s.x, s.y, s.width, s.height);
         }
-        font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
+        if(isGameOver) {
+            fontLarge.draw(batch, "GAME OVER", 0, SCR_HEIGHT/4*3, SCR_WIDTH, Align.center, true);
+            btnBack.font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
+        }
         for(Fragment f: fragments) {
             batch.draw(imgFragment[f.type], f.getX(), f.getY(), f.width/2, f.height/2, f.width, f.height, 1, 1, f.rotation);
         }
@@ -251,7 +255,7 @@ public class ScreenGame implements Screen {
             ship.lives--;
             ship.isAlive = false;
             if(ship.lives == 0) {
-                gameOver();
+                isGameOver = true;
             }
         }
     }
@@ -260,18 +264,15 @@ public class ScreenGame implements Screen {
         ship.isAlive = true;
         ship.x = SCR_WIDTH/2;
         ship.y = SCR_HEIGHT/12;
+        ship.vx = 0;
     }
 
     void gameStart(){
         fragments.clear();
         enemies.clear();
         shots.clear();
-        ship.lives = 3;
+        ship.lives = 1;
         respawnShip();
-    }
-
-    void gameOver(){
-        isGameOver = true;
-        //satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
+        isGameOver = false;
     }
 }

@@ -14,7 +14,7 @@ public class SatSpaceArcade extends Game {
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	Vector3 touch;
-	BitmapFont font;
+	BitmapFont fontLarge, fontSmall;
 
 	ScreenMenu screenMenu;
 	ScreenSettings screenSettings;
@@ -27,7 +27,8 @@ public class SatSpaceArcade extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
 		touch = new Vector3();
-		font = new BitmapFont(Gdx.files.internal("crystalfont.fnt"));
+		fontLarge = new BitmapFont(Gdx.files.internal("crystalfont.fnt"));
+		fontSmall = new BitmapFont(Gdx.files.internal("crystalsmall.fnt"));
 
 		screenMenu = new ScreenMenu(this);
 		screenSettings = new ScreenSettings(this);

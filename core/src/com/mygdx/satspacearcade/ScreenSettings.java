@@ -31,7 +31,7 @@ public class ScreenSettings implements Screen {
         batch = satSpaceArcade.batch;
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
-        font = satSpaceArcade.font;
+        font = satSpaceArcade.fontLarge;
 
         imgBackGround = new Texture("stars1.png");
 

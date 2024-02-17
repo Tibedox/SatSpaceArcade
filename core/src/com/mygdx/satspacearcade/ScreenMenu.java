@@ -30,7 +30,7 @@ public class ScreenMenu implements Screen {
         batch = satSpaceArcade.batch;
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
-        font = satSpaceArcade.font;
+        font = satSpaceArcade.fontLarge;
         //font.getData().setScale(2f);
 
         imgBackGround = new Texture("stars3.png");

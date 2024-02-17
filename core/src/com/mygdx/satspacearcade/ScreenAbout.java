@@ -28,7 +28,7 @@ public class ScreenAbout implements Screen {
         batch = satSpaceArcade.batch;
         camera = satSpaceArcade.camera;
         touch = satSpaceArcade.touch;
-        font = satSpaceArcade.font;
+        font = satSpaceArcade.fontLarge;
 
         imgBackGround = new Texture("stars2.png");
 
