@@ -2,10 +2,12 @@ package com.mygdx.satspacearcade;
 
 import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_HEIGHT;
 import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
+import static com.mygdx.satspacearcade.SatSpaceArcade.TYPE_SHIP;
 
 public class Ship extends SpaceObject{
 
     public Ship(){
+        type = TYPE_SHIP;
         x = SCR_WIDTH/2;
         y = SCR_HEIGHT/12;
         width = height = 200;

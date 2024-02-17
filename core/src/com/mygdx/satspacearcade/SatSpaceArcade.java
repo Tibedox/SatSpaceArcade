@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 
 public class SatSpaceArcade extends Game {
 	public static final float SCR_WIDTH = 900, SCR_HEIGHT = 1600;
+	public static final int TYPE_SHIP = 0, TYPE_ENEMY1 = 1;
 
 	SpriteBatch batch;
 	OrthographicCamera camera;

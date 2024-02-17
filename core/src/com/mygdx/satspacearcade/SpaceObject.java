@@ -6,6 +6,7 @@ public class SpaceObject {
     float x, y;
     float width, height;
     float vx, vy;
+    int type;
     int phase, nPhases = 12;
     long timeLastPhase, timePhaseInterval = 50;
 
