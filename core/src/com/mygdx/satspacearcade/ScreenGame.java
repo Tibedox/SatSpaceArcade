@@ -6,6 +6,7 @@ import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -24,6 +25,9 @@ public class ScreenGame implements Screen {
 
     boolean isGyroscopeAvailable;
     boolean isAccelerometerAvailable;
+
+    Sound sndShot;
+    Sound sndExplosion;
 
     Texture imgBackGround;
     Texture imgShipsAtlas;
@@ -50,6 +54,9 @@ public class ScreenGame implements Screen {
         isGyroscopeAvailable = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
         isAccelerometerAvailable = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
 
+        sndShot = Gdx.audio.newSound(Gdx.files.internal("blaster.wav"));
+        sndExplosion = Gdx.audio.newSound(Gdx.files.internal("explosion.wav"));
+
         imgBackGround = new Texture("stars0.png");
         imgShipsAtlas = new Texture("ships_atlas3.png");
         imgShot = new Texture("shoot_blaster_red.png");
@@ -73,7 +80,12 @@ public class ScreenGame implements Screen {
 
     @Override
     public void show() {
-
+        touch.set(0, 0, 0);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            //
+        }
     }
 
     @Override
@@ -120,6 +132,7 @@ public class ScreenGame implements Screen {
                 if(shots.get(i).overlap(enemies.get(j))){
                     shots.removeIndex(i);
                     enemies.removeIndex(j);
+                    sndExplosion.play();
                     break;
                 }
             }
@@ -167,12 +180,15 @@ public class ScreenGame implements Screen {
         imgBackGround.dispose();
         imgShipsAtlas.dispose();
         imgShot.dispose();
+        sndShot.dispose();
+        sndExplosion.dispose();
     }
 
     void spawnShot(){
         if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
             shots.add(new Shot(ship));
             timeShotLastSpawn = TimeUtils.millis();
+            sndShot.play(0.2f);
         }
     }
 
