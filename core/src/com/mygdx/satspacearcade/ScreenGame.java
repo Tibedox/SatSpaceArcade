@@ -41,6 +41,7 @@ public class ScreenGame implements Screen {
     SpaceButton btnBack;
     Stars[] stars = new Stars[2];
     Ship ship;
+    int shipLives = 3;
     Array<Shot> shots = new Array<>();
     long timeShotLastSpawn, timeShotInterval = 700;
     Array<Enemy> enemies = new Array<>();
@@ -274,7 +275,8 @@ public class ScreenGame implements Screen {
         fragments.clear();
         enemies.clear();
         shots.clear();
-        ship.lives = 1;
+        ship.lives = shipLives;
+        ship.isAlive = true;
         respawnShip();
         isGameOver = false;
         kills = 0;
