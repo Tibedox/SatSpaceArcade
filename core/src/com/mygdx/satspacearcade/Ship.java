@@ -5,6 +5,8 @@ import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
 import static com.mygdx.satspacearcade.SatSpaceArcade.TYPE_SHIP;
 
 public class Ship extends SpaceObject{
+    int lives = 3;
+    boolean isAlive = true;
 
     public Ship(){
         type = TYPE_SHIP;
