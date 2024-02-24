@@ -5,6 +5,7 @@ import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -41,7 +42,7 @@ public class ScreenGame implements Screen {
     SpaceButton btnBack;
     Stars[] stars = new Stars[2];
     Ship ship;
-    int shipLives = 3;
+    int shipLives = 1;
     Array<Shot> shots = new Array<>();
     long timeShotLastSpawn, timeShotInterval = 700;
     Array<Enemy> enemies = new Array<>();
@@ -50,6 +51,8 @@ public class ScreenGame implements Screen {
     int nFragments = 50;
     boolean isGameOver;
     int kills;
+
+    Player[] players = new Player[11];
 
     public ScreenGame(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -84,6 +87,11 @@ public class ScreenGame implements Screen {
         }
         imgFragment[0] = new TextureRegion(imgFragmentsAtlas, 0, 0, 100, 100);
         imgFragment[1] = new TextureRegion(imgFragmentsAtlas, 500, 0, 100, 100);
+
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player("Noname", 0);
+        }
+        loadRecords();
 
         stars[0] = new Stars(0);
         stars[1] = new Stars(SCR_HEIGHT);
@@ -160,7 +168,7 @@ public class ScreenGame implements Screen {
                     sndExplosion.play();
                     shots.removeIndex(i);
                     enemies.removeIndex(j);
-                    kills++;
+                    if(!isGameOver) kills++;
                     break;
                 }
             }
@@ -178,10 +186,6 @@ public class ScreenGame implements Screen {
         for (Stars s: stars) {
             batch.draw(imgBackGround, s.x, s.y, s.width, s.height);
         }
-        if(isGameOver) {
-            fontLarge.draw(batch, "GAME OVER", 0, SCR_HEIGHT/4*3, SCR_WIDTH, Align.center, true);
-            btnBack.font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
-        }
         for(Fragment f: fragments) {
             batch.draw(imgFragment[f.type], f.getX(), f.getY(), f.width/2, f.height/2, f.width, f.height, 1, 1, f.rotation);
         }
@@ -198,6 +202,14 @@ public class ScreenGame implements Screen {
             batch.draw(imgShip[0], SCR_WIDTH-90*(i+1), SCR_HEIGHT-90, 70, 70);
         }
         fontSmall.draw(batch, "Kills: "+kills, 20, SCR_HEIGHT-20);
+        if(isGameOver) {
+            fontLarge.draw(batch, "GAME OVER", 0, SCR_HEIGHT/4*3, SCR_WIDTH, Align.center, true);
+            for (int i = 0; i < players.length-1; i++) {
+                fontSmall.draw(batch, i+1+" "+players[i].name, 200, 1000-i*60);
+                fontSmall.draw(batch, "......."+players[i].score, 200, 1000-i*60, SCR_WIDTH-400, Align.right, true);
+            }
+            btnBack.font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
+        }
         batch.end();
     }
 
@@ -235,7 +247,7 @@ public class ScreenGame implements Screen {
         if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
             shots.add(new Shot(ship));
             timeShotLastSpawn = TimeUtils.millis();
-            sndShot.play(0.2f);
+            sndShot.play(0.05f);
         }
     }
 
@@ -259,7 +271,7 @@ public class ScreenGame implements Screen {
             ship.lives--;
             ship.isAlive = false;
             if(ship.lives == 0) {
-                isGameOver = true;
+                gameOver();
             }
         }
     }
@@ -271,6 +283,14 @@ public class ScreenGame implements Screen {
         ship.vx = 0;
     }
 
+    void gameOver(){
+        players[players.length-1].name = "Bobr";
+        players[players.length-1].score = kills;
+        isGameOver = true;
+        sortRecords();
+        saveRecords();
+    }
+
     void gameStart(){
         fragments.clear();
         enemies.clear();
@@ -280,5 +300,37 @@ public class ScreenGame implements Screen {
         respawnShip();
         isGameOver = false;
         kills = 0;
+    }
+
+    void sortRecords() {
+        boolean flag = true;
+        while (flag){
+            flag = false;
+            for (int i = 0; i < players.length-1; i++) {
+                if(players[i].score<players[i+1].score){
+                    Player c = players[i];
+                    players[i] = players[i+1];
+                    players[i+1] = c;
+                    flag = true;
+                }
+            }
+        }
+    }
+
+    void saveRecords() {
+        Preferences prefs = Gdx.app.getPreferences("SatArcadeRecords");
+        for (int i = 0; i < players.length; i++) {
+            prefs.putString("name"+i, players[i].name);
+            prefs.putInteger("score"+i, players[i].score);
+        }
+        prefs.flush();
+    }
+
+    void loadRecords() {
+        Preferences prefs = Gdx.app.getPreferences("SatArcadeRecords");
+        for (int i = 0; i < players.length; i++) {
+            if(prefs.contains("name"+i)) players[i].name = prefs.getString("name"+i);
+            if(prefs.contains("score"+i)) players[i].score = prefs.getInteger("score"+i);
+        }
     }
 }
