@@ -22,6 +22,7 @@ public class SatSpaceArcade extends Game {
 	ScreenAbout screenAbout;
 
 	String playerName = "Player";
+	boolean isSoundOn = true;
 	
 	@Override
 	public void create () {

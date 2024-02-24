@@ -165,7 +165,7 @@ public class ScreenGame implements Screen {
             for (int j = 0; j < enemies.size; j++) {
                 if(shots.get(i).overlap(enemies.get(j))){
                     spawnFragments(enemies.get(j));
-                    sndExplosion.play();
+                    if(satSpaceArcade.isSoundOn) sndExplosion.play();
                     shots.removeIndex(i);
                     enemies.removeIndex(j);
                     if(!isGameOver) kills++;
@@ -247,7 +247,7 @@ public class ScreenGame implements Screen {
         if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
             shots.add(new Shot(ship));
             timeShotLastSpawn = TimeUtils.millis();
-            sndShot.play(0.05f);
+            if(satSpaceArcade.isSoundOn) sndShot.play(0.05f);
         }
     }
 
@@ -266,7 +266,7 @@ public class ScreenGame implements Screen {
 
     void killShip(){
         if(ship.isAlive) {
-            sndExplosion.play();
+            if(satSpaceArcade.isSoundOn) sndExplosion.play();
             spawnFragments(ship);
             ship.lives--;
             ship.isAlive = false;
@@ -331,6 +331,13 @@ public class ScreenGame implements Screen {
         for (int i = 0; i < players.length; i++) {
             if(prefs.contains("name"+i)) players[i].name = prefs.getString("name"+i);
             if(prefs.contains("score"+i)) players[i].score = prefs.getInteger("score"+i);
+        }
+    }
+
+    void clearRecords() {
+        for (int i = 0; i < players.length; i++) {
+            players[i].name = "Noname";
+            players[i].score = 0;
         }
     }
 }

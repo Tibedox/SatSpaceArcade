@@ -4,6 +4,7 @@ import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_HEIGHT;
 import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,7 +22,7 @@ public class ScreenSettings implements Screen {
 
     SpaceButton btnName;
     SpaceButton btnSound;
-    SpaceButton btnMusic;
+    SpaceButton btnClearRecords;
     SpaceButton btnBack;
 
     Texture imgBackGround;
@@ -38,11 +39,14 @@ public class ScreenSettings implements Screen {
 
         imgBackGround = new Texture("stars1.png");
 
+        loadSettings();
+
         btnName = new SpaceButton("Name: "+satSpaceArcade.playerName, 100, 1000, fontLarge);
-        btnSound = new SpaceButton("Sound ON", 100, 800, fontLarge);
-        btnMusic = new SpaceButton("Music ON", 100, 600, fontLarge);
+        btnSound = new SpaceButton(satSpaceArcade.isSoundOn ? "Sound On" : "Sound Off", 100, 800, fontLarge);
+        btnClearRecords = new SpaceButton("Clear Records", 100, 600, fontLarge);
         btnBack = new SpaceButton("Back", 100, 400, fontLarge);
         keyboard = new InputKeyboard(fontSmall, SCR_WIDTH, SCR_HEIGHT/2, 8);
+
     }
 
     @Override
@@ -67,10 +71,12 @@ public class ScreenSettings implements Screen {
                     isUseInputKeyboard = true;
                 }
                 if (btnSound.hit(touch.x, touch.y)) {
-                    //satSpaceArcade.setScreen(satSpaceArcade.screenSettings);
+                    satSpaceArcade.isSoundOn = !satSpaceArcade.isSoundOn;
+                    btnSound.setText(satSpaceArcade.isSoundOn ? "Sound On" : "Sound Off");
                 }
-                if (btnMusic.hit(touch.x, touch.y)) {
-                    //satSpaceArcade.setScreen(satSpaceArcade.screenGame);
+                if (btnClearRecords.hit(touch.x, touch.y)) {
+                    satSpaceArcade.screenGame.clearRecords();
+                    btnClearRecords.setText("Records Cleared");
                 }
                 if (btnBack.hit(touch.x, touch.y)) {
                     satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
@@ -87,7 +93,7 @@ public class ScreenSettings implements Screen {
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         fontLarge.draw(batch, btnName.text, btnName.x, btnName.y);
         fontLarge.draw(batch, btnSound.text, btnSound.x, btnSound.y);
-        fontLarge.draw(batch, btnMusic.text, btnMusic.x, btnMusic.y);
+        fontLarge.draw(batch, btnClearRecords.text, btnClearRecords.x, btnClearRecords.y);
         fontLarge.draw(batch, btnBack.text, btnBack.x, btnBack.y);
         if(isUseInputKeyboard) {
             keyboard.draw(batch);
@@ -112,12 +118,26 @@ public class ScreenSettings implements Screen {
 
     @Override
     public void hide() {
-
+        btnClearRecords.setText("Clear Records");
+        saveSettings();
     }
 
     @Override
     public void dispose() {
         imgBackGround.dispose();
         keyboard.dispose();
+    }
+
+    void saveSettings() {
+        Preferences prefs = Gdx.app.getPreferences("SatArcadeSettings");
+        prefs.putString("name", satSpaceArcade.playerName);
+        prefs.putBoolean("sound", satSpaceArcade.isSoundOn);
+        prefs.flush();
+    }
+
+    void loadSettings() {
+        Preferences prefs = Gdx.app.getPreferences("SatArcadeSettings");
+        if(prefs.contains("name")) satSpaceArcade.playerName = prefs.getString("name");
+        if(prefs.contains("sound")) satSpaceArcade.isSoundOn = prefs.getBoolean("sound");
     }
 }
