@@ -35,14 +35,14 @@ public class ScreenGame implements Screen {
     Texture imgShipsAtlas;
     Texture imgFragmentsAtlas;
     TextureRegion[] imgShip = new TextureRegion[12];
-    TextureRegion[] imgEnemy = new TextureRegion[12];
-    TextureRegion[] imgFragment = new TextureRegion[2];
+    TextureRegion[][] imgEnemy = new TextureRegion[5][12];
+    TextureRegion[] imgFragment = new TextureRegion[5];
     Texture imgShot;
 
     SpaceButton btnBack;
     Stars[] stars = new Stars[2];
     Ship ship;
-    int shipLives = 1;
+    int shipLives = 3;
     Array<Shot> shots = new Array<>();
     long timeShotLastSpawn, timeShotInterval = 700;
     Array<Enemy> enemies = new Array<>();
@@ -79,14 +79,23 @@ public class ScreenGame implements Screen {
         for (int i = 0; i < imgShip.length; i++) {
             if(i<7) {
                 imgShip[i] = new TextureRegion(imgShipsAtlas, i * 400, 0, 400, 400);
-                imgEnemy[i] = new TextureRegion(imgShipsAtlas, i * 400, 1600, 400, 400);
             } else {
                 imgShip[i] = new TextureRegion(imgShipsAtlas, (12-i) * 400, 0, 400, 400);
-                imgEnemy[i] = new TextureRegion(imgShipsAtlas, (12-i) * 400, 1600, 400, 400);
+            }
+        }
+        for (int j = 0; j < imgEnemy.length; j++) {
+            for (int i = 0; i < imgEnemy[j].length; i++) {
+                if (i < 7) {
+                    imgEnemy[j][i] = new TextureRegion(imgShipsAtlas, i * 400, 400*j, 400, 400);
+                } else {
+                    imgEnemy[j][i] = new TextureRegion(imgShipsAtlas, (12 - i) * 400, 400*j, 400, 400);
+                }
             }
         }
         imgFragment[0] = new TextureRegion(imgFragmentsAtlas, 0, 0, 100, 100);
-        imgFragment[1] = new TextureRegion(imgFragmentsAtlas, 500, 0, 100, 100);
+        for (int i = 0; i < imgEnemy.length; i++) {
+            imgFragment[i] = new TextureRegion(imgFragmentsAtlas, i*100+100, 0, 100, 100);
+        }
 
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
@@ -190,7 +199,7 @@ public class ScreenGame implements Screen {
             batch.draw(imgFragment[f.type], f.getX(), f.getY(), f.width/2, f.height/2, f.width, f.height, 1, 1, f.rotation);
         }
         for (Enemy s: enemies) {
-            batch.draw(imgEnemy[s.phase], s.getX(), s.getY(), s.width, s.height);
+            batch.draw(imgEnemy[s.type][s.phase], s.getX(), s.getY(), s.width, s.height);
         }
         for (Shot s: shots) {
             batch.draw(imgShot, s.getX(), s.getY(), s.width, s.height);
