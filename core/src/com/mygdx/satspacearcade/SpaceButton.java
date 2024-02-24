@@ -44,4 +44,10 @@ public class SpaceButton {
     boolean hit(float tx, float ty) {
         return x < tx & tx < x+width & y-height < ty & ty < y;
     }
+
+    void setText(String text) {
+        this.text = text;
+        GlyphLayout layout = new GlyphLayout(font, text);
+        width = layout.width;
+    }
 }

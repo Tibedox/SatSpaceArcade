@@ -20,6 +20,8 @@ public class SatSpaceArcade extends Game {
 	ScreenSettings screenSettings;
 	ScreenGame screenGame;
 	ScreenAbout screenAbout;
+
+	String playerName = "Player";
 	
 	@Override
 	public void create () {

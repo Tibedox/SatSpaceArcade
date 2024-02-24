@@ -284,7 +284,7 @@ public class ScreenGame implements Screen {
     }
 
     void gameOver(){
-        players[players.length-1].name = "Bobr";
+        players[players.length-1].name = satSpaceArcade.playerName;
         players[players.length-1].score = kills;
         isGameOver = true;
         sortRecords();
