@@ -18,18 +18,19 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class ScreenGame implements Screen {
+    // системные объекты
     SatSpaceArcade satSpaceArcade;
     SpriteBatch batch;
     OrthographicCamera camera;
     Vector3 touch;
-    BitmapFont fontLarge, fontSmall;
 
     boolean isGyroscopeAvailable;
     boolean isAccelerometerAvailable;
 
+    // ресурсы
+    BitmapFont fontLarge, fontSmall;
     Sound sndShot;
     Sound sndExplosion;
-
     Texture imgBackGround;
     Texture imgShipsAtlas;
     Texture imgFragmentsAtlas;
@@ -44,13 +45,15 @@ public class ScreenGame implements Screen {
     int shipLives = 3;
     Array<Shot> shots = new Array<>();
     Array<Enemy> enemies = new Array<>();
-    long timeEnemyLastSpawn, timeEnemyInterval = 1500;
     Array<Fragment> fragments = new Array<>();
     int nFragments = 50;
     boolean isGameOver;
     int kills;
-
     Player[] players = new Player[11];
+
+    // время
+    long timeEnemyLastSpawn, timeEnemyInterval = 1500;
+    long timeLastIncreaseSpeed, timeIncreaseSpeedInterval = 1000;
 
     public ScreenGame(SatSpaceArcade satSpaceArcade) {
         this.satSpaceArcade = satSpaceArcade;
@@ -197,6 +200,7 @@ public class ScreenGame implements Screen {
                 fragments.removeIndex(i);
             }
         }
+        increaseSpeed();
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
@@ -296,6 +300,15 @@ public class ScreenGame implements Screen {
         ship.x = SCR_WIDTH/2;
         ship.y = SCR_HEIGHT/12;
         ship.vx = 0;
+    }
+
+    void increaseSpeed(){
+        if(TimeUtils.millis()> timeLastIncreaseSpeed + timeIncreaseSpeedInterval){
+            for(Enemy e: enemies){
+                e.vy -= 1;
+            }
+            timeLastIncreaseSpeed = TimeUtils.millis();
+        }
     }
 
     void gameOver(){
