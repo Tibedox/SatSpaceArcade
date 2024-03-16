@@ -4,9 +4,12 @@ import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_HEIGHT;
 import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
 import static com.mygdx.satspacearcade.SatSpaceArcade.TYPE_SHIP;
 
+import com.badlogic.gdx.utils.TimeUtils;
+
 public class Ship extends SpaceObject{
     int lives;
     boolean isAlive;
+    long timeShotLastSpawn, timeShotInterval = 700;
 
     public Ship(){
         type = TYPE_SHIP;
@@ -35,5 +38,13 @@ public class Ship extends SpaceObject{
             x = SCR_WIDTH-width/2;
             vx = 0;
         }
+    }
+
+    boolean isShoot(){
+        if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
+            timeShotLastSpawn = TimeUtils.millis();
+            return true;
+        }
+        return false;
     }
 }

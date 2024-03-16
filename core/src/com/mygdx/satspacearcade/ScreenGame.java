@@ -1,7 +1,6 @@
 package com.mygdx.satspacearcade;
 
-import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_HEIGHT;
-import static com.mygdx.satspacearcade.SatSpaceArcade.SCR_WIDTH;
+import static com.mygdx.satspacearcade.SatSpaceArcade.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -37,14 +36,13 @@ public class ScreenGame implements Screen {
     TextureRegion[] imgShip = new TextureRegion[12];
     TextureRegion[][] imgEnemy = new TextureRegion[5][12];
     TextureRegion[] imgFragment = new TextureRegion[5];
-    Texture imgShot;
+    Texture[] imgShot = new Texture[2];
 
     SpaceButton btnBack;
     Stars[] stars = new Stars[2];
     Ship ship;
     int shipLives = 3;
     Array<Shot> shots = new Array<>();
-    long timeShotLastSpawn, timeShotInterval = 700;
     Array<Enemy> enemies = new Array<>();
     long timeEnemyLastSpawn, timeEnemyInterval = 1500;
     Array<Fragment> fragments = new Array<>();
@@ -72,7 +70,8 @@ public class ScreenGame implements Screen {
         imgBackGround = new Texture("stars0.png");
         imgShipsAtlas = new Texture("ships_atlas3.png");
         imgFragmentsAtlas = new Texture("ships_fragment_atlas.png");
-        imgShot = new Texture("shoot_blaster_red.png");
+        imgShot[0] = new Texture("shoot_blaster_red.png");
+        imgShot[1] = new Texture("shoot_blaster_blue.png");
 
         btnBack = new SpaceButton("back to menu", SCR_HEIGHT/5, fontSmall, Align.center);
 
@@ -146,7 +145,7 @@ public class ScreenGame implements Screen {
         if(ship.isAlive) {
             ship.move();
             spawnEnemy();
-            spawnShot();
+            if(ship.isShoot()) spawnShot(ship);
         } else {
             if(shots.size == 0 & enemies.size == 0 & ship.lives>0){
                 respawnShip();
@@ -164,15 +163,20 @@ public class ScreenGame implements Screen {
                 enemies.removeIndex(i);
                 killShip();
             }
+            if((enemies.get(i).type == TYPE_ENEMY1 | enemies.get(i).type == TYPE_ENEMY3)
+                & enemies.get(i).isShoot()){
+                spawnShot(enemies.get(i));
+            }
         }
-        for (int i = 0; i < shots.size; i++) {
+        for (int i = shots.size-1; i>=0; i--) {
             shots.get(i).move();
             if(shots.get(i).outOfScreen()) {
                 shots.removeIndex(i);
                 continue;
             }
             for (int j = 0; j < enemies.size; j++) {
-                if(shots.get(i).overlap(enemies.get(j))){
+                if(shots.get(i).overlap(enemies.get(j))
+                        && shots.get(i).type == TYPE_SHIP && shots.get(i).y<SCR_HEIGHT){
                     spawnFragments(enemies.get(j));
                     if(satSpaceArcade.isSoundOn) sndExplosion.play();
                     shots.removeIndex(i);
@@ -180,6 +184,11 @@ public class ScreenGame implements Screen {
                     if(!isGameOver) kills++;
                     break;
                 }
+            }
+            if(ship.isAlive & shots.get(i).overlap(ship) & shots.get(i).type != TYPE_SHIP){
+                shots.removeIndex(i);
+                killShip();
+                break;
             }
         }
         for (int i = 0; i < fragments.size; i++) {
@@ -202,7 +211,7 @@ public class ScreenGame implements Screen {
             batch.draw(imgEnemy[s.type][s.phase], s.getX(), s.getY(), s.width, s.height);
         }
         for (Shot s: shots) {
-            batch.draw(imgShot, s.getX(), s.getY(), s.width, s.height);
+            batch.draw(imgShot[s.type==TYPE_SHIP?0:1], s.getX(), s.getY(), s.width, s.height);
         }
         if(ship.isAlive) {
             batch.draw(imgShip[ship.phase], ship.getX(), ship.getY(), ship.width, ship.height);
@@ -247,17 +256,14 @@ public class ScreenGame implements Screen {
         imgBackGround.dispose();
         imgShipsAtlas.dispose();
         imgFragmentsAtlas.dispose();
-        imgShot.dispose();
+        for (Texture texture : imgShot) texture.dispose();
         sndShot.dispose();
         sndExplosion.dispose();
     }
 
-    void spawnShot(){
-        if(TimeUtils.millis() > timeShotLastSpawn+timeShotInterval){
-            shots.add(new Shot(ship));
-            timeShotLastSpawn = TimeUtils.millis();
-            if(satSpaceArcade.isSoundOn) sndShot.play(0.05f);
-        }
+    void spawnShot(SpaceObject object){
+        shots.add(new Shot(object));
+        if(satSpaceArcade.isSoundOn) sndShot.play(0.05f);
     }
 
     void spawnEnemy(){
