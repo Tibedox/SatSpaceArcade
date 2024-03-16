@@ -174,6 +174,11 @@ public class ScreenGame implements Screen {
                 shots.removeIndex(i);
                 continue;
             }
+            if(ship.isAlive & shots.get(i).overlap(ship) & shots.get(i).type != TYPE_SHIP){
+                shots.removeIndex(i);
+                killShip();
+                break;
+            }
             for (int j = 0; j < enemies.size; j++) {
                 if(shots.get(i).overlap(enemies.get(j))
                         && shots.get(i).type == TYPE_SHIP && shots.get(i).y<SCR_HEIGHT){
@@ -184,11 +189,6 @@ public class ScreenGame implements Screen {
                     if(!isGameOver) kills++;
                     break;
                 }
-            }
-            if(ship.isAlive & shots.get(i).overlap(ship) & shots.get(i).type != TYPE_SHIP){
-                shots.removeIndex(i);
-                killShip();
-                break;
             }
         }
         for (int i = 0; i < fragments.size; i++) {
