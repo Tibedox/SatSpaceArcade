@@ -19,7 +19,15 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ScreenGame implements Screen {
     // системные объекты
@@ -56,6 +64,7 @@ public class ScreenGame implements Screen {
     boolean isGameOver;
     int kills;
     Player[] players = new Player[11];
+    List<RecordFromDB> recordsFromDB = new ArrayList<>();
 
     // время
     long timeEnemyLastSpawn, timeEnemyInterval = 1500;
@@ -241,6 +250,10 @@ public class ScreenGame implements Screen {
             fontLarge.draw(batch, "GAME OVER", 0, SCR_HEIGHT/4*3, SCR_WIDTH, Align.center, true);
             if(isShowGlobalRecords){
                 fontSmall.draw(batch, "Global records", 0, 1070, SCR_WIDTH, Align.center, true);
+                for (int i = 0; i < players.length - 1; i++) {
+                    fontSmall.draw(batch, i + 1 + " " + recordsFromDB.get(i).name, 200, 960 - i * 60);
+                    fontSmall.draw(batch, "......." + recordsFromDB.get(i).score, 200, 960 - i * 60, SCR_WIDTH - 400, Align.right, true);
+                }
             }
             else {
                 fontSmall.draw(batch, "Local records", 0, 1070, SCR_WIDTH, Align.center, true);
@@ -337,6 +350,7 @@ public class ScreenGame implements Screen {
         isGameOver = true;
         sortRecords2();
         saveRecords();
+        saveRecordToDB();
     }
 
     void gameStart(){
@@ -347,22 +361,18 @@ public class ScreenGame implements Screen {
         ship.isAlive = true;
         respawnShip();
         isGameOver = false;
+        isShowGlobalRecords = false;
         kills = 0;
     }
 
-    void sortRecords() {
-        boolean flag = true;
-        while (flag){
-            flag = false;
-            for (int i = 0; i < players.length-1; i++) {
-                if(players[i].score<players[i+1].score){
-                    Player c = players[i];
-                    players[i] = players[i+1];
-                    players[i+1] = c;
-                    flag = true;
-                }
+    void sortRecords1() {
+        class Cmp implements Comparator<RecordFromDB>{
+            @Override
+            public int compare(RecordFromDB p1, RecordFromDB p2) {
+                return p2.score-p1.score;
             }
         }
+        Collections.sort(recordsFromDB, new Cmp());
     }
 
     void sortRecords2() {
@@ -397,5 +407,26 @@ public class ScreenGame implements Screen {
             players[i].name = "Noname";
             players[i].score = 0;
         }
+    }
+
+    void saveRecordToDB() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://sat.sch120.ru")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        MyApi myApi = retrofit.create(MyApi.class);
+
+        myApi.sendData(satSpaceArcade.playerName, kills).enqueue(new Callback<List<RecordFromDB>>() {
+            @Override
+            public void onResponse(Call<List<RecordFromDB>> call, Response<List<RecordFromDB>> response) {
+                recordsFromDB = response.body();
+                sortRecords1();
+            }
+
+            @Override
+            public void onFailure(Call<List<RecordFromDB>> call, Throwable t) {
+
+            }
+        });
     }
 }
