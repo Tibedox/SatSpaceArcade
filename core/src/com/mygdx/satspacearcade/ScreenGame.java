@@ -17,6 +17,10 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class ScreenGame implements Screen {
     // системные объекты
     SatSpaceArcade satSpaceArcade;
@@ -39,10 +43,12 @@ public class ScreenGame implements Screen {
     TextureRegion[] imgFragment = new TextureRegion[5];
     Texture[] imgShot = new Texture[2];
 
+    SpaceButton btnSwitchGlobalRecods;
     SpaceButton btnBack;
+    boolean isShowGlobalRecords;
     Stars[] stars = new Stars[2];
     Ship ship;
-    int shipLives = 3;
+    int shipLives = 1;
     Array<Shot> shots = new Array<>();
     Array<Enemy> enemies = new Array<>();
     Array<Fragment> fragments = new Array<>();
@@ -76,7 +82,8 @@ public class ScreenGame implements Screen {
         imgShot[0] = new Texture("shoot_blaster_red.png");
         imgShot[1] = new Texture("shoot_blaster_blue.png");
 
-        btnBack = new SpaceButton("back to menu", SCR_HEIGHT/5, fontSmall, Align.center);
+        btnSwitchGlobalRecods = new SpaceButton("global/local records", SCR_HEIGHT/5, fontSmall, Align.center);
+        btnBack = new SpaceButton("back to menu", SCR_HEIGHT/5-100, fontSmall, Align.center);
 
         for (int i = 0; i < imgShip.length; i++) {
             if(i<7) {
@@ -126,12 +133,18 @@ public class ScreenGame implements Screen {
         if(Gdx.input.isTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
+            ship.touch(touch.x);
+        }
+        if(Gdx.input.justTouched()){
+            touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touch);
 
             if(isGameOver & btnBack.hit(touch.x, touch.y)){
                 satSpaceArcade.setScreen(satSpaceArcade.screenMenu);
             }
-
-            ship.touch(touch.x);
+            if(isGameOver & btnSwitchGlobalRecods.hit(touch.x, touch.y)){
+                isShowGlobalRecords = !isShowGlobalRecords;
+            }
         }
         /* else if (isAccelerometerAvailable){
             ship.vx = -Gdx.input.getAccelerometerX()*10;
@@ -226,10 +239,17 @@ public class ScreenGame implements Screen {
         fontSmall.draw(batch, "Kills: "+kills, 20, SCR_HEIGHT-20);
         if(isGameOver) {
             fontLarge.draw(batch, "GAME OVER", 0, SCR_HEIGHT/4*3, SCR_WIDTH, Align.center, true);
-            for (int i = 0; i < players.length-1; i++) {
-                fontSmall.draw(batch, i+1+" "+players[i].name, 200, 1000-i*60);
-                fontSmall.draw(batch, "......."+players[i].score, 200, 1000-i*60, SCR_WIDTH-400, Align.right, true);
+            if(isShowGlobalRecords){
+                fontSmall.draw(batch, "Global records", 0, 1070, SCR_WIDTH, Align.center, true);
             }
+            else {
+                fontSmall.draw(batch, "Local records", 0, 1070, SCR_WIDTH, Align.center, true);
+                for (int i = 0; i < players.length - 1; i++) {
+                    fontSmall.draw(batch, i + 1 + " " + players[i].name, 200, 960 - i * 60);
+                    fontSmall.draw(batch, "......." + players[i].score, 200, 960 - i * 60, SCR_WIDTH - 400, Align.right, true);
+                }
+            }
+            btnSwitchGlobalRecods.font.draw(batch, btnSwitchGlobalRecods.text, btnSwitchGlobalRecods.x, btnSwitchGlobalRecods.y);
             btnBack.font.draw(batch, btnBack.text, btnBack.x, btnBack.y);
         }
         batch.end();
@@ -315,7 +335,7 @@ public class ScreenGame implements Screen {
         players[players.length-1].name = satSpaceArcade.playerName;
         players[players.length-1].score = kills;
         isGameOver = true;
-        sortRecords();
+        sortRecords2();
         saveRecords();
     }
 
@@ -343,6 +363,16 @@ public class ScreenGame implements Screen {
                 }
             }
         }
+    }
+
+    void sortRecords2() {
+        class Cmp implements Comparator<Player>{
+            @Override
+            public int compare(Player p1, Player p2) {
+                return p2.score-p1.score;
+            }
+        }
+        Arrays.sort(players, new Cmp());
     }
 
     void saveRecords() {
