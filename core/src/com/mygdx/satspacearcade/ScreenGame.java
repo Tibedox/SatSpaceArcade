@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -351,6 +352,7 @@ public class ScreenGame implements Screen {
         sortRecords2();
         saveRecords();
         saveRecordToDB();
+        sortRecords1();
     }
 
     void gameStart(){
@@ -416,7 +418,14 @@ public class ScreenGame implements Screen {
                 .build();
         MyApi myApi = retrofit.create(MyApi.class);
 
-        myApi.sendData(satSpaceArcade.playerName, kills).enqueue(new Callback<List<RecordFromDB>>() {
+        try {
+            Response<List<RecordFromDB>> response = myApi.sendData(satSpaceArcade.playerName, kills).execute();
+            recordsFromDB = response.body();
+        } catch (IOException e) {
+            //
+        }
+
+        /*myApi.sendData(satSpaceArcade.playerName, kills).enqueue(new Callback<List<RecordFromDB>>() {
             @Override
             public void onResponse(Call<List<RecordFromDB>> call, Response<List<RecordFromDB>> response) {
                 recordsFromDB = response.body();
@@ -427,6 +436,6 @@ public class ScreenGame implements Screen {
             public void onFailure(Call<List<RecordFromDB>> call, Throwable t) {
 
             }
-        });
+        });*/
     }
 }
